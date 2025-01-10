@@ -25,6 +25,9 @@
 
 # Visual Studio cache directory
 .vs/
+.idea/
+.vscode/
+.vsconfig
 
 # Gradle cache directory
 .gradle/
@@ -59,7 +62,6 @@ sysinfo.txt
 *.apk
 *.aab
 *.unitypackage
-*.unitypackage.meta
 *.app
 
 # Crashlytics generated file
@@ -71,3 +73,4 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Assets/Art/Fonts/감탄로드탄탄체 SDF.asset
