@@ -298,32 +298,32 @@ public class DataManager : MonoBehaviour
             playerData.fireBulletChance.Add(i * 0.1f); // 0.0 0.1 0.2 0.3 0.4
         }
 
-        playerData.missileUseCoolTime = 1.0f;
+        playerData.missileUseCoolTime = 30.0f;
         playerData.missileCount = new List<int>()
         {
             0, 1, 1, 2, 3
         };
-        playerData.knifeUseCoolTime = 1.0f;
+        playerData.knifeUseCoolTime = 30.0f;
         playerData.knifeCount = new List<int>()
         {
             0, 1, 3, 4, 5
         };
-        playerData.shieldUseCoolTime = 1.0f;
+        playerData.shieldUseCoolTime = 30.0f;
         playerData.shieldCount = new List<int>()
         {
             0, 1, 1, 1, 1
         };
-        playerData.fragUseCoolTime = 1.0f;
+        playerData.fragUseCoolTime = 30.0f;
         playerData.fragCount = new List<int>()
         {
             0, 1, 1, 2, 3
         };
-        playerData.smokeUseCoolTime = 1.0f;
+        playerData.smokeUseCoolTime = 30.0f;
         playerData.smokeCount = new List<int>()
         {
             0, 1, 1, 2, 3
         };
-        playerData.mineUseCoolTime = 1.0f;
+        playerData.mineUseCoolTime = 30.0f;
         playerData.mineCount = new List<int>()
         {
             0, 1, 1, 2, 2

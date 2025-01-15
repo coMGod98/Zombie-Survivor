@@ -33,12 +33,18 @@ public class Player : MonoBehaviour
     public bool IsDead => curHp <= 0;
 
     public bool IsAttackable => bulletFireElapsedTime >= playerData.bulletFireCoolTime[upgradeSelectionCounts[UpgradeType.BulletFireCoolTime]];
-    public bool IsMissileUsable => missileUseElapsedTime >= playerData.missileUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]];
-    public bool IsKnifeUsable => knifeUseElapsedTime >= playerData.knifeUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]]; 
-    public bool IsShieldUsable => shieldUseElapsedTime >= playerData.shieldUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]];
-    public bool IsFragUsable => fragUseElapsedTime >= playerData.fragUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]];
-    public bool IsSmokeUsable => smokeUseElapsedTime >= playerData.smokeUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]];
-    public bool IsMineUsable => mineUseElapsedTime >= playerData.mineUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]];
+    public bool IsMissileUsable => missileUseElapsedTime >= playerData.missileUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]]
+    && upgradeSelectionCounts[UpgradeType.Missile] > 0;
+    public bool IsKnifeUsable => knifeUseElapsedTime >= playerData.knifeUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]]
+    && upgradeSelectionCounts[UpgradeType.Knife] > 0; 
+    public bool IsShieldUsable => shieldUseElapsedTime >= playerData.shieldUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]]
+    && upgradeSelectionCounts[UpgradeType.Shield] > 0;
+    public bool IsFragUsable => fragUseElapsedTime >= playerData.fragUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]]
+    && upgradeSelectionCounts[UpgradeType.FragGrenade] > 0;
+    public bool IsSmokeUsable => smokeUseElapsedTime >= playerData.smokeUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]]
+    && upgradeSelectionCounts[UpgradeType.SmokeGrenade] > 0;
+    public bool IsMineUsable => mineUseElapsedTime >= playerData.mineUseCoolTime * playerData.weaponCooldown[upgradeSelectionCounts[UpgradeType.WeaponCooldown]]
+    && upgradeSelectionCounts[UpgradeType.Mine] > 0;
     
     void Awake()
     {
@@ -76,12 +82,19 @@ public class Player : MonoBehaviour
         
         level = 1;
         curExp = 0.0f;
-        curHp = playerData.maxHp[upgradeSelectionCounts[UpgradeType.MaxHp]];
+        curHp = 10000;//playerData.maxHp[upgradeSelectionCounts[UpgradeType.MaxHp]];
         curArmor = 0.0f;
         
         bulletFireElapsedTime = 0.0f;
         bulletReloadElapsedTime = 0.0f;
         bulletCurrentCount = playerData.bulletMaxCount[upgradeSelectionCounts[UpgradeType.BulletMaxCount]];
+        
+        missileUseElapsedTime = 40.0f;
+        knifeUseElapsedTime = 40.0f;
+        shieldUseElapsedTime = 40.0f;
+        fragUseElapsedTime = 40.0f;
+        smokeUseElapsedTime = 40.0f;
+        mineUseElapsedTime = 40.0f;
     }
     
     public void IncreaseAbilityCount(UpgradeType upgradeType)

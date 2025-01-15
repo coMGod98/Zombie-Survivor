@@ -65,7 +65,7 @@ public class WeaponManager : MonoBehaviour
                 if (GameWorld.Instance.MonsterManager.IsMonster(col.gameObject.GetInstanceID(), out var monster))
                 {
                     missile.gameObject.SetActive(false);
-                    Vector3 bombPosition = new Vector3(monster.transform.position.x, 1.0f, monster.transform.position.z);
+                    Vector3 bombPosition = new Vector3(monster.transform.position.x, 1.5f, monster.transform.position.z);
 
                     GameWorld.Instance.FXManager.FXSpawn(1, bombPosition, Quaternion.identity); 
                     int hitcount2 = Physics.OverlapSphereNonAlloc(missile.transform.position, 
@@ -79,7 +79,7 @@ public class WeaponManager : MonoBehaviour
                             GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster2, missile.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.Missile]]);
                         }
                     }
-                    yield break;
+                    break;
                 }
             }
             yield return null;
