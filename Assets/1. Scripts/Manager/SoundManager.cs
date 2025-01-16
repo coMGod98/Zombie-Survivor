@@ -1,22 +1,36 @@
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public class SoundManager : MonoBehaviour
 {
-    public AudioMixer _audioMixer;
+    public AudioClip fireSound;
+    public AudioClip bombSound;
+    public AudioClip hitSound;
+    public AudioClip expSound;
     
+    public AudioSource audio;
+    
+    public AudioMixer audioMixer;
+
+    private void Awake()
+    {
+        AudioSource[] temp = GetComponentsInChildren<AudioSource>();
+        audio = temp[1];
+    }
+
     public void SetMasterVolume(float volume)
     {
-        _audioMixer.SetFloat("Master", Mathf.Log10(volume) * 20);
+        audioMixer.SetFloat("Master", Mathf.Log10(volume) * 20);
     }
     
     public void SetBGMVolume(float volume)
     {
-        _audioMixer.SetFloat("BGM", Mathf.Log10(volume) * 20);
+        audioMixer.SetFloat("BGM", Mathf.Log10(volume) * 20);
     }
     
     public void SetSFXVolume(float volume)
     {
-        _audioMixer.SetFloat("SFX", Mathf.Log10(volume) * 20);
+        audioMixer.SetFloat("SFX", Mathf.Log10(volume) * 20);
     }
 }

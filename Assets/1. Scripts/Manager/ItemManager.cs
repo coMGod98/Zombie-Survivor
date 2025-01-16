@@ -112,13 +112,16 @@ public class ItemManager : MonoBehaviour
 
     private IEnumerator ItemMove(Item item)
     {
+        Vector3 moveDir = item.target.transform.position - item.transform.position;
+        float moveDist = moveDir.magnitude;
+        
+        float moveSpeed = Mathf.Clamp(moveDist * 2.0f, 5.0f, 20.0f);
         while (item.target != null)
         {
-            Vector3 moveDir = item.target.transform.position - item.transform.position;
-            float moveDist = moveDir.magnitude;
+            moveDir = item.target.transform.position - item.transform.position;
+            moveDist = moveDir.magnitude;
             moveDir.Normalize();
             
-            float moveSpeed = Mathf.Clamp(moveDist * 2.0f, 5.0f, 20.0f);
             float moveAmout = moveSpeed * Time.unscaledDeltaTime;
             if (moveDist < moveAmout) moveAmout = moveDist;
             item.transform.Translate(moveDir * moveAmout, Space.World);

@@ -26,10 +26,16 @@ public class RoundManager : MonoBehaviour
         eliteSpawnTimer += Time.deltaTime;
         bossSpawnTimer += Time.deltaTime;
         
-        if (elapsedTime >= 720.0f)
+        if (elapsedTime >= 660.0f)
         {
-            // 게임 종료
-            
+            if (GameWorld.Instance.MonsterManager.allMonsterList.Count > 0)
+            {
+                GameWorld.Instance.GameOver();
+            }
+            else
+            {
+                GameWorld.Instance.GameClear();
+            }
         }
         
         if (elapsedTime >= 300.0f && phase == 0) // 5분마다 phase 증가
@@ -61,7 +67,7 @@ public class RoundManager : MonoBehaviour
             }
         }
     }
-
+    
     private void SpawnMonsters()
     {
         int[] monsterIndices = GetMonsterIndices();

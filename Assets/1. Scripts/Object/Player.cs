@@ -5,6 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public Animator playerAnimator;
+    public AudioSource playerSound;
+
     public PlayerData playerData;
 
     public bool IsFire;
@@ -49,6 +51,8 @@ public class Player : MonoBehaviour
     void Awake()
     {
         playerAnimator = GetComponentInChildren<Animator>();
+        playerSound = GetComponent<AudioSource>();
+        
         targetMonster = new List<Monster>();
         
         upgradeSelectionCounts = new Dictionary<UpgradeType, int>
@@ -82,7 +86,7 @@ public class Player : MonoBehaviour
         
         level = 1;
         curExp = 0.0f;
-        curHp = 10000;//playerData.maxHp[upgradeSelectionCounts[UpgradeType.MaxHp]];
+        curHp = playerData.maxHp[upgradeSelectionCounts[UpgradeType.MaxHp]];
         curArmor = 0.0f;
         
         bulletFireElapsedTime = 0.0f;

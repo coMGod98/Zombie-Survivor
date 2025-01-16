@@ -81,7 +81,7 @@ public class UIManager : MonoBehaviour
         armorSlider.value = player.curArmor / player.playerData.maxArmor[player.upgradeSelectionCounts[UpgradeType.MaxArmor]];
         expSlider.value = player.curExp / player.playerData.maxExp[player.level - 1];
         
-        TimeSpan timeSpan = TimeSpan.FromSeconds(720 - GameWorld.Instance.RoundManager.elapsedTime);
+        TimeSpan timeSpan = TimeSpan.FromSeconds(660 - GameWorld.Instance.RoundManager.elapsedTime);
         elaspedTime.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
         
         maxHp.text = player.playerData.maxHp[player.upgradeSelectionCounts[UpgradeType.MaxHp]].ToString();
@@ -130,14 +130,14 @@ public class UIManager : MonoBehaviour
 
     public void ResumeGame()
     {
-        ESCPanel.SetActive(false);
         Time.timeScale = 1.0f;
+        ESCPanel.SetActive(false);
     }
     
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Time.timeScale = 1.0f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void QuitGame()
@@ -184,15 +184,14 @@ public class UIManager : MonoBehaviour
             UpgradeType upgradeType = upgradeOptions[i];
             btn.onClick.AddListener(() =>
             {
-                GameWorld.Instance.PlayerManager.ApplyUpgrade(upgradeType);
+                LevelUPPanel.SetActive(false);
                 Time.timeScale = 1.0f;
                 foreach (GameObject obj in _poolUpgradeBtn)
                 {
                     obj.SetActive(false);
                 }
-                LevelUPPanel.SetActive(false);
-                
-                Debug.Log(upgradeType + GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[upgradeType].ToString());
+                GameWorld.Instance.PlayerManager.ApplyUpgrade(upgradeType);
+                GameWorld.Instance.PlayerManager.OnLevelUpComplete();
             });
             LevelUPBtn levelUPBtn = btnUpgradeObj.GetComponent<LevelUPBtn>();
             levelUPBtn.upgradeData = GameWorld.Instance.DataManager.upgradeDic[upgradeType];

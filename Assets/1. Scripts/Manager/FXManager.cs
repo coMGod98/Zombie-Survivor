@@ -22,6 +22,7 @@ public class FXManager : MonoBehaviour
 
     public void FXSpawn(int index, Vector3 position, Quaternion rotation)
     {
+        GameWorld.Instance.SoundManager.GetComponent<AudioSource>().PlayOneShot(GameWorld.Instance.SoundManager.bombSound, index);
         bool getFX = false;
         foreach (GameObject obj in _poolFXList[index])
         {

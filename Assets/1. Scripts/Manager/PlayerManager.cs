@@ -18,6 +18,8 @@ public class PlayerManager : MonoBehaviour
     private Vector3 _lookDirection;
     private Vector3 _moveDirection;
 
+    private bool _isLevelUp;
+    private Queue<UnityAction> _levelUpQueue;
     private List<UpgradeType> _upgradeOptions;
     private List<UpgradeType> _selectedUpgradeTypes;
     
@@ -25,7 +27,9 @@ public class PlayerManager : MonoBehaviour
     {
         _camera = Camera.main;
         player.playerData = GameWorld.Instance.DataManager.playerData;
-
+        
+        _isLevelUp = false;
+        _levelUpQueue = new Queue<UnityAction>();
         _upgradeOptions = new List<UpgradeType>()
         {
             UpgradeType.ExpGainAmount, UpgradeType.MaxHp, UpgradeType.MaxArmor, UpgradeType.MoveSpeed, UpgradeType.DetectObjRadius,
@@ -40,7 +44,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (player.IsDead)
         {
-            player.playerAnimator.SetBool("IsDead", true);
+            GameWorld.Instance.GameOver();
             return;
         }
         
@@ -80,14 +84,10 @@ public class PlayerManager : MonoBehaviour
             }
         }
     }
-
-    public void PlayerDead()
-    {
-        
-    }
-
+    
     public void PlayerInflictDamage(float dmg)
     {
+        player.playerSound.PlayOneShot(GameWorld.Instance.SoundManager.hitSound);
         if (player.curArmor > 0)
         {
             player.curArmor -= dmg;
@@ -116,6 +116,7 @@ public class PlayerManager : MonoBehaviour
                 player.playerAnimator.SetBool("IsReload", false);
                 GameWorld.Instance.UIManager.reloadTimeImage.gameObject.SetActive(false);
 
+                player.playerSound.PlayOneShot(GameWorld.Instance.SoundManager.fireSound);
                 GameWorld.Instance.BulletManager.BulletSpawn(0);
                 if (Random.value <
                     player.playerData.fireBulletChance[player.upgradeSelectionCounts[UpgradeType.FireBulletChance]])
@@ -237,6 +238,13 @@ public class PlayerManager : MonoBehaviour
     
     public void PlayerLevelUp()
     {
+        if (_isLevelUp)
+        {
+            _levelUpQueue.Enqueue(PlayerLevelUp);
+            return;
+        }
+        _isLevelUp = true;
+        
         System.Random random = new System.Random();
         Dictionary<UpgradeType, int> weightedOptions = new Dictionary<UpgradeType, int>();
        
@@ -288,6 +296,7 @@ public class PlayerManager : MonoBehaviour
     {
         bool levelChange = false;
         
+        player.playerSound.PlayOneShot(GameWorld.Instance.SoundManager.expSound);
         player.curExp += item.expData.expAmount[GameWorld.Instance.RoundManager.phase] * player.playerData.expGainAmount[player.upgradeSelectionCounts[UpgradeType.ExpGainAmount]];
         if (player.curExp >= player.playerData.maxExp[player.level - 1])
         {
@@ -296,7 +305,19 @@ public class PlayerManager : MonoBehaviour
             levelChange = true;
         }
 
-        if (levelChange) PlayerLevelUp();
+        if (levelChange)
+            PlayerLevelUp();
+    }
+    
+    public void OnLevelUpComplete()
+    {
+        _isLevelUp = false;
+        
+        if (_levelUpQueue.Count > 0)
+        {
+            var action = _levelUpQueue.Dequeue();
+            action?.Invoke();
+        }
     }
 
     public void GetHealItem(float healAmount)

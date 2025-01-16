@@ -39,38 +39,22 @@ public class GameWorld : Singleton<GameWorld>
         _bulletManager.BulletMove();
         _bulletManager.BulletDetectMonster();
         _itemManager.ItemUpdate();
-        
-        if(Input.GetKeyDown(KeyCode.F9))
-        {
-            _monsterManager.MonsterSpawn(0);
-        }
-        if(Input.GetKeyDown(KeyCode.F8))
-        {
-            _monsterManager.MonsterSpawn(1);
-        }
-        if(Input.GetKeyDown(KeyCode.F7))
-        {
-            _monsterManager.MonsterSpawn(2);
-        }
-        if(Input.GetKeyDown(KeyCode.F6))
-        {
-            _monsterManager.MonsterSpawn(3);
-        }
-        if(Input.GetKeyDown(KeyCode.F5))
-        {
-            _monsterManager.MonsterSpawn(4);
-        }
-        if(Input.GetKeyDown(KeyCode.F4))
-        {
-            _monsterManager.MonsterSpawn(5);
-        }
-        if(Input.GetKeyDown(KeyCode.F3))
-        {
-            _monsterManager.MonsterSpawn(6);
-        }
-        if(Input.GetKeyDown(KeyCode.F2))
-        {
-            _monsterManager.MonsterSpawn(7);
-        }
+    }
+    
+    public void GameOver()
+    {
+        Time.timeScale = 0.0f;
+        _uiManager.ShowLosePanel();
+    }
+    
+    public void GameClear()
+    {
+        Time.timeScale = 0.0f;
+        _uiManager.ShowWinPanel();
+    }
+    
+    private void OnEnable()
+    {
+        Time.timeScale = 1.0f;
     }
 }
