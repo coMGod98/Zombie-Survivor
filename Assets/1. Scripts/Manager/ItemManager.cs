@@ -101,7 +101,7 @@ public class ItemManager : MonoBehaviour
                     Vector3 viewportPoint = mainCamera.WorldToViewportPoint(monster.transform.position);
                     if (viewportPoint.x > 0 && viewportPoint.x < 1 && viewportPoint.y > 0 && viewportPoint.y < 1)
                     {
-                        GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, 10);
+                        GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, 300);
                     }
                 }
 

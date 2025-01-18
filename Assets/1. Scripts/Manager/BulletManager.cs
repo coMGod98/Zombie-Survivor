@@ -46,7 +46,7 @@ public class BulletManager : MonoBehaviour
                         Collider col = _bulletResults[j];
                         if (GameWorld.Instance.MonsterManager.IsMonster(col.gameObject.GetInstanceID(), out var monster) && !bullet.hitMonsterList.Contains(monster))
                         {
-                            if (monster.IsDead) continue;
+                            if(monster.IsDead) continue;
                             GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, hitDamage);
                             bullet.hitMonsterList.Add(monster);
                             // 관통
@@ -135,11 +135,17 @@ public class BulletManager : MonoBehaviour
         { 
             Bullet bullet = allBulletList[i];
             float moveDistance = bullet.bulletData.bulletSpeed[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.BulletSpeed]] * Time.deltaTime;
+            if (bullet.bulletType == BulletType.SmallBullet) moveDistance = 5.0f * Time.deltaTime;
             bullet.transform.Translate
                 (bullet.moveDirection * moveDistance, Space.World);
             bullet.moveDistance += moveDistance;
-
-            if (bullet.gameObject.activeSelf && bullet.moveDistance >= 20.0f)
+            
+            if (bullet.gameObject.activeSelf && bullet.bulletType == BulletType.SmallBullet && bullet.moveDistance >= 5.0f)
+            {
+                allBulletList.Remove(bullet);
+                bullet.gameObject.SetActive(false);
+            }
+            else if (bullet.gameObject.activeSelf && bullet.moveDistance >= 20.0f)
             {
                 allBulletList.Remove(bullet);
                 bullet.gameObject.SetActive(false);
@@ -160,7 +166,7 @@ public class BulletManager : MonoBehaviour
 
             Vector3 bulletMoveVector = new Vector3(bulletDirX, position.y, bulletDirZ);
             Vector3 bulletDir = (bulletMoveVector - position).normalized;
-            Quaternion bulletRotation = Quaternion.LookRotation(bulletDir) * Quaternion.Euler(0, 90, 0);
+            Quaternion bulletRotation = Quaternion.LookRotation(bulletDir) * Quaternion.Euler(90, 0, 0);
             
             SpawnBullet(index, position, bulletRotation, bulletSpawnParent, bulletDir);
             angle += angleStep;

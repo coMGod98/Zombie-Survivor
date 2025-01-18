@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public enum MonsterType
 {
@@ -243,18 +241,18 @@ public class DataManager : MonoBehaviour
         playerData.bulletDamage = new List<float>();
         for(int i = 0; i < 5; i ++)
         {
-            playerData.bulletDamage.Add(20.0f + i * 20.0f); // 20 40 60 80 100
+            playerData.bulletDamage.Add(40.0f + i * 20.0f); // 40 60 80 100 120
         }
 
         playerData.bulletReloadTime = new List<float>();
         for(int i = 0; i < 5; i ++)
         {
-            playerData.bulletReloadTime.Add(4.0f - i * 0.8f); // 4.0 3.2 2.4 1.6 0.8    
+            playerData.bulletReloadTime.Add(3.0f - i * 0.5f); // 3.0 2.5 2.0 1.5 1.0
         }
 
         playerData.bulletMaxCount = new List<int>()
         {
-            6, 8, 11, 15, 20
+            8, 10, 13, 17, 22
         };
 
         playerData.weaponCooldown = new List<float>();
@@ -298,22 +296,22 @@ public class DataManager : MonoBehaviour
             playerData.fireBulletChance.Add(i * 0.1f); // 0.0 0.1 0.2 0.3 0.4
         }
 
-        playerData.missileUseCoolTime = 30.0f;
+        playerData.missileUseCoolTime = 20.0f;
         playerData.missileCount = new List<int>()
         {
             0, 1, 1, 2, 3
         };
-        playerData.knifeUseCoolTime = 30.0f;
+        playerData.knifeUseCoolTime = 25.0f;
         playerData.knifeCount = new List<int>()
         {
             0, 1, 3, 4, 5
         };
-        playerData.shieldUseCoolTime = 30.0f;
+        playerData.shieldUseCoolTime = 25.0f;
         playerData.shieldCount = new List<int>()
         {
             0, 1, 1, 1, 1
         };
-        playerData.fragUseCoolTime = 30.0f;
+        playerData.fragUseCoolTime = 20.0f;
         playerData.fragCount = new List<int>()
         {
             0, 1, 1, 2, 3
@@ -323,7 +321,7 @@ public class DataManager : MonoBehaviour
         {
             0, 1, 1, 2, 3
         };
-        playerData.mineUseCoolTime = 30.0f;
+        playerData.mineUseCoolTime = 20.0f;
         playerData.mineCount = new List<int>()
         {
             0, 1, 1, 2, 2
@@ -340,7 +338,7 @@ public class DataManager : MonoBehaviour
         bulletData.bulletSpeed = new List<float>();
         for (int i = 0; i < 5; i++)
         {
-            bulletData.bulletSpeed.Add(7.0f + i * 2.0f); // 7 9 11 13 15
+            bulletData.bulletSpeed.Add(8.0f + i * 2.0f); // 8 10 12 14 16
         }
         bulletData.scale = 1.0f;
         bulletData.hitRange = 1.0f;
@@ -355,7 +353,7 @@ public class DataManager : MonoBehaviour
         {
             bulletData.bulletSpeed.Add(7.0f + i * 2.0f); // 7 9 11 13 15
         }
-        bulletData.scale = 0.5f;
+        bulletData.scale = 1.0f;
         bulletData.hitRange = 0.5f;
         bulletData.damageCoefficient = 0.5f;
         
@@ -383,7 +381,7 @@ public class DataManager : MonoBehaviour
         // Missile
         weaponData.WeaponType = WeaponType.Missile;
         weaponData.scale = 1.0f;
-        weaponData.hitRange = 2.0f;
+        weaponData.hitRange = 3.0f;
         weaponData.weaponDamage = new List<float>();
         for (int i = 0; i < 5; i++)
         {
@@ -461,9 +459,9 @@ public class DataManager : MonoBehaviour
         monsterData.monsterType = MonsterType.NormalShort1;
         monsterData.maxHp = new List<float>()
         {
-            50.0f, 300.0f
+            50.0f, 200.0f
         };
-        monsterData.moveSpeed = 1.0f;
+        monsterData.moveSpeed = 0.8f;
         monsterData.attackDmg = new List<float>()
         {
             10.0f, 20.0f
@@ -480,9 +478,47 @@ public class DataManager : MonoBehaviour
         monsterData.monsterType = MonsterType.NormalShort2;
         monsterData.maxHp = new List<float>()
         {
-            150.0f, 900.0f
+            300.0f, 1000.0f
         };
-        monsterData.moveSpeed = 1.0f;
+        monsterData.moveSpeed = 0.8f;
+        monsterData.attackDmg = new List<float>()
+        {
+            15.0f, 30.0f
+        };
+        monsterData.attackCoolTime = 1.0f;
+        monsterData.skillActivationRange = 0.0f;
+        monsterData.skillDuration = 0.0f;
+        monsterData.skillCoolTime = 0.0f;
+        monsterData.expKey = 2;
+        
+        monsterDic.Add(MonsterType.NormalShort2, monsterData);
+        
+        // NormalShort3
+        monsterData.monsterType = MonsterType.NormalShort3;
+        monsterData.maxHp = new List<float>()
+        {
+            500.0f, 2000.0f
+        };
+        monsterData.moveSpeed = 0.8f;
+        monsterData.attackDmg = new List<float>()
+        {
+            20.0f, 40.0f
+        };
+        monsterData.attackCoolTime = 1.0f;
+        monsterData.skillActivationRange = 0.0f;
+        monsterData.skillDuration = 0.0f;
+        monsterData.skillCoolTime = 0.0f;
+        monsterData.expKey = 3;
+        
+        monsterDic.Add(MonsterType.NormalShort3, monsterData);
+        
+        // NormalFast
+        monsterData.monsterType = MonsterType.NormalFast;
+        monsterData.maxHp = new List<float>()
+        {
+            150.0f, 600.0f
+        };
+        monsterData.moveSpeed = 2.5f;
         monsterData.attackDmg = new List<float>()
         {
             10.0f, 20.0f
@@ -493,56 +529,18 @@ public class DataManager : MonoBehaviour
         monsterData.skillCoolTime = 0.0f;
         monsterData.expKey = 1;
         
-        monsterDic.Add(MonsterType.NormalShort2, monsterData);
-        
-        // NormalShort3
-        monsterData.monsterType = MonsterType.NormalShort3;
-        monsterData.maxHp = new List<float>()
-        {
-            250.0f, 1500.0f
-        };
-        monsterData.moveSpeed = 1.0f;
-        monsterData.attackDmg = new List<float>()
-        {
-            10.0f, 20.0f
-        };
-        monsterData.attackCoolTime = 1.0f;
-        monsterData.skillActivationRange = 0.0f;
-        monsterData.skillDuration = 0.0f;
-        monsterData.skillCoolTime = 0.0f;
-        monsterData.expKey = 2;
-        
-        monsterDic.Add(MonsterType.NormalShort3, monsterData);
-        
-        // NormalFast
-        monsterData.monsterType = MonsterType.NormalFast;
-        monsterData.maxHp = new List<float>()
-        {
-            100.0f, 600.0f
-        };
-        monsterData.moveSpeed = 3.0f;
-        monsterData.attackDmg = new List<float>()
-        {
-            10.0f, 20.0f
-        };
-        monsterData.attackCoolTime = 1.0f;
-        monsterData.skillActivationRange = 0.0f;
-        monsterData.skillDuration = 0.0f;
-        monsterData.skillCoolTime = 0.0f;
-        monsterData.expKey = 3;
-        
         monsterDic.Add(MonsterType.NormalFast, monsterData);
         
         // NormalLong
         monsterData.monsterType = MonsterType.NormalLong;
         monsterData.maxHp = new List<float>()
         {
-            100.0f, 600.0f
+            300.0f, 1000.0f
         };
-        monsterData.moveSpeed = 2.0f;
+        monsterData.moveSpeed = 1.5f;
         monsterData.attackDmg = new List<float>()
         {
-            10.0f, 20.0f
+            20.0f, 40.0f
         };
         monsterData.attackCoolTime = 1.0f;
         monsterData.skillActivationRange = 10.0f;
@@ -556,12 +554,12 @@ public class DataManager : MonoBehaviour
         monsterData.monsterType = MonsterType.EliteShort;
         monsterData.maxHp = new List<float>()
         {
-            500.0f, 3000.0f
+            1000.0f, 5000.0f
         };
-        monsterData.moveSpeed = 2.0f;
+        monsterData.moveSpeed = 1.5f;
         monsterData.attackDmg = new List<float>()
         {
-            10.0f, 20.0f
+            30.0f, 60.0f
         };
         monsterData.attackCoolTime = 1.0f;
         monsterData.skillActivationRange = 0.0f;
@@ -575,12 +573,12 @@ public class DataManager : MonoBehaviour
         monsterData.monsterType = MonsterType.EliteRush;
         monsterData.maxHp = new List<float>()
         {
-            2000.0f, 9000.0f
+            3000.0f, 9000.0f
         };
         monsterData.moveSpeed = 2.0f;
         monsterData.attackDmg = new List<float>()
         {
-            10.0f, 20.0f
+            50.0f, 100.0f
         };
         monsterData.attackCoolTime = 1.0f;
         monsterData.skillActivationRange = 6.0f;
@@ -594,12 +592,12 @@ public class DataManager : MonoBehaviour
         monsterData.monsterType = MonsterType.Boss;
         monsterData.maxHp = new List<float>()
         {
-            0.0f, 20000.0f
+            0.0f, 30000.0f
         };
         monsterData.moveSpeed = 3.0f;
         monsterData.attackDmg = new List<float>()
         {
-            10.0f, 20.0f
+            0.0f, 150.0f
         };
         monsterData.attackCoolTime = 1.0f;
         monsterData.skillActivationRange = 5.0f;
@@ -630,7 +628,7 @@ public class DataManager : MonoBehaviour
         expData.expType = ExpType.SmallExp;
         expData.expAmount = new List<float>()
         {
-            10.0f, 20.0f
+            100.0f, 200.0f
         };
         
         expDic.Add(1, expData);
@@ -640,7 +638,7 @@ public class DataManager : MonoBehaviour
         expData.expType = ExpType.MediumExp;
         expData.expAmount = new List<float>()
         {
-            10.0f, 20.0f
+            200.0f, 400.0f
         };
         
         expDic.Add(2, expData);
@@ -650,7 +648,7 @@ public class DataManager : MonoBehaviour
         expData.expType = ExpType.LargeExp;
         expData.expAmount = new List<float>()
         {
-            10.0f, 20.0f
+            300.0f, 600.0f
         };
         
         expDic.Add(3, expData);
@@ -660,7 +658,7 @@ public class DataManager : MonoBehaviour
         expData.expType = ExpType.HugeExp;
         expData.expAmount = new List<float>()
         {
-            10.0f, 20.0f
+            400.0f, 800.0f
         };
         
         expDic.Add(4, expData);
@@ -670,7 +668,7 @@ public class DataManager : MonoBehaviour
         expData.expType = ExpType.GiantExp;
         expData.expAmount = new List<float>()
         {
-            10.0f, 20.0f
+            500.0f, 1000.0f
         };
         
         expDic.Add(5, expData);
@@ -680,8 +678,10 @@ public class DataManager : MonoBehaviour
         expData.expType = ExpType.MegaExp;
         expData.expAmount = new List<float>()
         {
-            10.0f, 20.0f
+            600.0f, 1200.0f
         };
+        
+        expDic.Add(6, expData);
     }
 
     void SaveUpgradeData()
@@ -791,7 +791,7 @@ public class DataManager : MonoBehaviour
         upgradeData.description = new List<string>();
         for(int i = 0; i < 4; i++)
         {
-            upgradeData.description.Add("장전 속도가 1초 감소합니다.");
+            upgradeData.description.Add("장전 속도가 0.5초 감소합니다.");
         };
         
         upgradeDic.Add(UpgradeType.BulletReloadTime, upgradeData);

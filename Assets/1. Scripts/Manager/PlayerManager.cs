@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.Pool;
-using UnityEngine.Serialization;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -105,19 +104,20 @@ public class PlayerManager : MonoBehaviour
     
     public void PlayerAttack()
     {
-        if (Input.GetMouseButton(0) && player.bulletCurrentCount > 0)
+        if (Input.GetMouseButton(0) && player.bulletCurrentCount > 0 && EventSystem.current.IsPointerOverGameObject() == false)
         {
             player.IsFire = true;
             if (player.IsAttackable)
             {
+                player.playerSound.PlayOneShot(GameWorld.Instance.SoundManager.fireSound);
+                GameWorld.Instance.BulletManager.BulletSpawn(0);
+                
                 player.bulletCurrentCount--;
                 player.bulletFireElapsedTime = 0.0f;
                 player.bulletReloadElapsedTime = 0.0f;
                 player.playerAnimator.SetBool("IsReload", false);
                 GameWorld.Instance.UIManager.reloadTimeImage.gameObject.SetActive(false);
-
-                player.playerSound.PlayOneShot(GameWorld.Instance.SoundManager.fireSound);
-                GameWorld.Instance.BulletManager.BulletSpawn(0);
+                
                 if (Random.value <
                     player.playerData.fireBulletChance[player.upgradeSelectionCounts[UpgradeType.FireBulletChance]])
 

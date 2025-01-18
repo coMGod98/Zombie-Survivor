@@ -48,7 +48,7 @@ public class WeaponManager : MonoBehaviour
         float moveAmout = 0.0f;
         while (missile.gameObject.activeSelf)
         {
-            float moveDistance = 5.0f * Time.deltaTime;
+            float moveDistance = 7.0f * Time.deltaTime;
             missile.transform.Translate(missile.transform.forward * moveDistance, Space.World);
             moveAmout += moveDistance;
 

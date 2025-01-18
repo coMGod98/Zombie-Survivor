@@ -38,12 +38,6 @@ public class RoundManager : MonoBehaviour
             }
         }
         
-        if (elapsedTime >= 300.0f && phase == 0) // 5분마다 phase 증가
-        {
-            phase++;
-            eliteSpawnCount = 1;
-        }
-
         if (elapsedTime < 600.0f)
         {
 
@@ -65,6 +59,12 @@ public class RoundManager : MonoBehaviour
                 bossSpawnTimer = 0.0f;
                 SpawnBossMonster();
             }
+        }
+        
+        if (elapsedTime >= 300.0f && phase == 0) // 5분마다 phase 증가
+        {
+            phase++;
+            eliteSpawnCount = 1;
         }
     }
     

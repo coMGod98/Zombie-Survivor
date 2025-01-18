@@ -102,8 +102,8 @@ public class MonsterManager : MonoBehaviour
     
     public void MonsterInflictDamage(Monster monster, float damage)
     {
+        if (monster.IsDead) return;
         monster.curHp -= damage;
-        
         GameWorld.Instance.UIManager.ShowDamageText(monster.transform.position + Vector3.up * 1.0f, damage);
     }
     
@@ -113,9 +113,10 @@ public class MonsterManager : MonoBehaviour
         allMonsterList.Remove(monster);
         GameWorld.Instance.UIManager.RemoveMonsterHpBar(monster);
         StartCoroutine(DisApearing(monster));   
-                
+        
+        GameWorld.Instance.ItemManager.ItemSpawn(0, monster, monster.transform.position);
         float randomValue = Random.value;
-        if (randomValue < 0.2f)
+        if (randomValue < 0.05f)
         {
             int randomPick = GetRandomPick();
             float radius = 0.5f;
@@ -128,7 +129,6 @@ public class MonsterManager : MonoBehaviour
                     
             GameWorld.Instance.ItemManager.ItemSpawn(randomPick, monster, randomPosition);
         }
-        GameWorld.Instance.ItemManager.ItemSpawn(0, monster, monster.transform.position);
     }
     
     private IEnumerator DisApearing(Monster monster)
@@ -257,7 +257,20 @@ public class MonsterManager : MonoBehaviour
         monster.monsterAnimator.SetBool("IsUseSkill", true);
         monster.meshFilter.mesh = CreateRectangleMesh(2, 10);
         monster.meshRenderer.enabled = true;
-        yield return new WaitForSeconds(3.0f);
+        
+        float waitTime = 3.0f;
+        float elapsedTime = 0.0f;
+        while (elapsedTime < waitTime)
+        {
+            if (monster.IsDead)
+            {
+                monster.meshRenderer.enabled = false;
+                yield break;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
         monster.meshRenderer.enabled = false;
         monster.monsterAnimator.SetBool("IsRush", true);
 
@@ -266,6 +279,12 @@ public class MonsterManager : MonoBehaviour
         
         while (moveDist > 0.0f)
         {
+            if (monster.IsDead)
+            {
+                monster.meshRenderer.enabled = false;
+                yield break;
+            }
+            
             float moveAmount = Mathf.Min(7.0f * Time.deltaTime, moveDist);
             monster.transform.Translate(monster.transform.forward * moveAmount, Space.World);
             moveDist -= moveAmount;
@@ -300,14 +319,32 @@ public class MonsterManager : MonoBehaviour
         monster.monsterAnimator.SetBool("IsUseSkill", true);
         monster.meshFilter.mesh = CreateSectorMesh(9.0f, 120, 10);
         monster.meshRenderer.enabled = true;
-        yield return new WaitForSeconds(3.5f);
+        
+        float waitTime = 3.5f;
+        float elapsedTime = 0.0f;
+        while (elapsedTime < waitTime)
+        {
+            if (monster.IsDead)
+            {
+                monster.meshRenderer.enabled = false;
+                yield break;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
         monster.meshRenderer.enabled = false;
         monster.monsterAnimator.SetBool("IsScream", true);
 
         float prevElapsedTime = 0.0f;
-        float elapsedTime = 0.0f;
+        elapsedTime = 0.0f;
         while (elapsedTime < 1.8f)
         {
+            if (monster.IsDead)
+            {
+                monster.meshRenderer.enabled = false;
+                yield break;
+            }
             prevElapsedTime = elapsedTime;
             elapsedTime += Time.deltaTime;
             if (prevElapsedTime < 1.3 && elapsedTime >= 1.3)
@@ -341,14 +378,33 @@ public class MonsterManager : MonoBehaviour
         monster.monsterAnimator.SetBool("IsUseSkill", true);
         monster.meshFilter.mesh = CreateCircleMesh(8, 1000);
         monster.meshRenderer.enabled = true;
-        yield return new WaitForSeconds(3.0f);
+        
+        float waitTime = 3.0f;
+        float elapsedTime = 0.0f;
+        while (elapsedTime < waitTime)
+        {
+            if (monster.IsDead)
+            {
+                monster.meshRenderer.enabled = false;
+                yield break;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
         monster.meshRenderer.enabled = false;
         monster.monsterAnimator.SetBool("IsJump", true);
         
         float prevElapsedTime = 0.0f;
-        float elapsedTime = 0.0f;
+        elapsedTime = 0.0f;
         while (elapsedTime < 2.0f)
         {
+            if (monster.IsDead)
+            {
+                monster.meshRenderer.enabled = false;
+                yield break;
+            }
+            
             prevElapsedTime = elapsedTime;
             elapsedTime += Time.deltaTime;
             if (prevElapsedTime < 1.5 && elapsedTime >= 1.5)
@@ -513,8 +569,7 @@ public class MonsterManager : MonoBehaviour
                 monster.MonsterInit();
                 allMonsterList.Add(monster);
                 
-                if (monster.monsterType == MonsterType.Boss || (monster.monsterType == MonsterType.EliteRush && GameWorld.Instance.RoundManager.phase == 0)) 
-                    GameWorld.Instance.UIManager.CreateMonsterHpBar(monster);
+                GameWorld.Instance.UIManager.CreateMonsterHpBar(monster);
                 break;
             }
         }

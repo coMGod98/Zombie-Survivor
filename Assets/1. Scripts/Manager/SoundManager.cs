@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -9,14 +8,14 @@ public class SoundManager : MonoBehaviour
     public AudioClip hitSound;
     public AudioClip expSound;
     
-    public AudioSource audio;
+    public AudioSource fxAudio;
     
     public AudioMixer audioMixer;
 
     private void Awake()
     {
         AudioSource[] temp = GetComponentsInChildren<AudioSource>();
-        audio = temp[1];
+        fxAudio = temp[1];
     }
 
     public void SetMasterVolume(float volume)

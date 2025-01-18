@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class Player : MonoBehaviour
 {
     public Animator playerAnimator;
@@ -113,15 +112,16 @@ public class Player : MonoBehaviour
     
     public bool IsPlayerAbility(UpgradeType option)
     {
-        return option == UpgradeType.BulletSpeed || option == UpgradeType.BulletFireCoolTime || option == UpgradeType.BulletDamage ||
-               option == UpgradeType.BulletReloadTime || option == UpgradeType.BulletMaxCount || option == UpgradeType.WeaponCooldown ||
-               option == UpgradeType.AllAttackRange;
+        return option == UpgradeType.ExpGainAmount || option == UpgradeType.MaxHp || option == UpgradeType.MaxArmor || 
+               option == UpgradeType.MoveSpeed || option == UpgradeType.DetectObjRadius || option == UpgradeType.BulletFireCoolTime || 
+               option == UpgradeType.BulletDamage || option == UpgradeType.BulletSpeed || option == UpgradeType.BulletReloadTime || 
+               option == UpgradeType.BulletMaxCount || option == UpgradeType.WeaponCooldown || option == UpgradeType.AllAttackRange;
     }
 
     public bool IsBulletAbility(UpgradeType option)
     {
-        return option == UpgradeType.BulletFireCount || option == UpgradeType.BulletPenetrationMaxCount || option == UpgradeType.BulletSpreadCount ||
-               option == UpgradeType.BombBulletChance || option == UpgradeType.FireBulletChance;
+        return option == UpgradeType.BulletFireCount || option == UpgradeType.BulletPenetrationMaxCount || 
+               option == UpgradeType.BulletSpreadCount || option == UpgradeType.BombBulletChance || option == UpgradeType.FireBulletChance;
     }
 
     public bool IsWeaponAbility(UpgradeType option)
