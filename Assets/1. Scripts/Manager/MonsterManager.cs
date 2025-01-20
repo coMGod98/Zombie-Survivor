@@ -5,15 +5,15 @@ using UnityEngine;
 public class MonsterManager : MonoBehaviour
 {
     public List<Monster> allMonsterList;
-    public GameObject[] monsterPrefabArray;
+    [SerializeField] private GameObject[] monsterPrefabArray;
     private List<GameObject>[] _poolMonsterList;
     
-    public GameObject monsterBulletPrefab;
+    [SerializeField] private GameObject monsterBulletPrefab;
     private List<GameObject> _poolMonsterBullet;
     
-    public Transform monsterSpawnParent;
+    [SerializeField] private Transform monsterSpawnParent;
     
-    public LayerMask playerMask;    
+   [SerializeField] private LayerMask playerMask;    
     private Dictionary<int, Monster> _objectIdToMonster;
     private Dictionary<int, float> _randomWeightValues;
     private Collider[] _bulletResults = new Collider[100];
@@ -141,9 +141,14 @@ public class MonsterManager : MonoBehaviour
 
     private void MonsterAttack(Monster monster)
     {
-        if (!monster.IsAttackable || monster.IsUsingSkill) return;
-        monster.attackElapsedTime = 0.0f;
-        GameWorld.Instance.PlayerManager.PlayerInflictDamage(monster.monsterData.attackDmg[GameWorld.Instance.RoundManager.phase]);
+        if (monster.IsUsingSkill) return;
+        if (monster.IsAttackable &&
+            Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= 1.0f)
+        {
+            monster.attackElapsedTime = 0.0f;
+            GameWorld.Instance.PlayerManager.PlayerInflictDamage(
+                monster.monsterData.attackDmg[GameWorld.Instance.RoundManager.phase]);
+        }
     }
 
     private void MonsterUseSkill(Monster monster)
@@ -151,7 +156,8 @@ public class MonsterManager : MonoBehaviour
         switch (monster.monsterType)
         {
             case MonsterType.NormalLong:
-                if (monster.IsSkillAvailable)
+                if (monster.IsSkillAvailable &&
+                    Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= monster.monsterData.skillActivationRange)
                 {
                     monster.monsterAnimator.SetBool("IsAttack", true);
                     monster.skillElapsedTime = 0.0f;
@@ -167,7 +173,8 @@ public class MonsterManager : MonoBehaviour
                 }
                 break;
             case MonsterType.EliteRush:
-                if (monster.IsSkillAvailable)
+                if (monster.IsSkillAvailable &&
+                    Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= monster.monsterData.skillActivationRange)
                 {
                     StartCoroutine(Rush(monster));
                     monster.skillElapsedTime = 0.0f;
@@ -175,7 +182,8 @@ public class MonsterManager : MonoBehaviour
                 
                 break;
             case MonsterType.Boss:
-                if (monster.IsSkillAvailable)
+                if (monster.IsSkillAvailable &&
+                    Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= monster.monsterData.skillActivationRange)
                 {
                     int randomSkill = Random.Range(0, 2);
                     switch (randomSkill)

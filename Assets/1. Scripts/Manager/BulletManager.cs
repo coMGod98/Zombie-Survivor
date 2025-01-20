@@ -4,14 +4,14 @@ using Random = UnityEngine.Random;
 
 public class BulletManager : MonoBehaviour
 {
-    public List<Bullet> allBulletList;
-    public GameObject[] bulletPrefabArray;
+    private List<Bullet> allBulletList;
+    [SerializeField] private GameObject[] bulletPrefabArray;
     private List<GameObject>[] _poolBulletList;
     
-    public Transform playerBulletSpawnPoint;
-    public Transform bulletSpawnParent;
+    [SerializeField] private Transform playerBulletSpawnPoint;
+    [SerializeField] private Transform bulletSpawnParent;
     
-    public LayerMask monsterMask;
+    [SerializeField] private LayerMask monsterMask;
 
     private Collider[] _bulletResults = new Collider[100];
     private Collider[] _bombResults = new Collider[100];

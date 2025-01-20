@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class FXManager : MonoBehaviour
 {
-    public GameObject[] fxPrefabArray;
+    [SerializeField] private GameObject[] fxPrefabArray;
     private List<GameObject>[] _poolFXList;
     
-    public Transform fxSpawnParent;
+    [SerializeField] private Transform fxSpawnParent;
 
     private void Awake()
     {

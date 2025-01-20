@@ -9,8 +9,8 @@ public class PlayerManager : MonoBehaviour
 {
     private Camera _camera;
     
-    public Player player;
-    public LayerMask groundMask;
+    [SerializeField] public Player player;
+    [SerializeField] private LayerMask  groundMask;
     
     private Vector2 _axis;
     private Vector2 _lerpAxis;
@@ -22,7 +22,7 @@ public class PlayerManager : MonoBehaviour
     private List<UpgradeType> _upgradeOptions;
     private List<UpgradeType> _selectedUpgradeTypes;
     
-    public void Awake()
+    private void Awake()
     {
         _camera = Camera.main;
         player.playerData = GameWorld.Instance.DataManager.playerData;

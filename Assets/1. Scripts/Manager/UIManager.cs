@@ -10,43 +10,43 @@ public class UIManager : MonoBehaviour
 {
     private Camera _camera;
 
-    public Texture2D cursor;
-    public Texture2D crosshair;
+    [SerializeField] private Texture2D cursor;
+    [SerializeField] private Texture2D crosshair;
     
-    public Slider hpSlider;
-    public Slider armorSlider;
-    public Slider expSlider;
+    [SerializeField] private Slider hpSlider;
+    [SerializeField] private Slider armorSlider;
+    [SerializeField] private Slider expSlider;
     
-    public TextMeshProUGUI elaspedTime;
+    [SerializeField] private TextMeshProUGUI elaspedTime;
     
-    public TextMeshProUGUI maxHp;
-    public TextMeshProUGUI curHp;
-    public TextMeshProUGUI maxArmor;
-    public TextMeshProUGUI curArmor;
+    [SerializeField] private TextMeshProUGUI maxHp;
+    [SerializeField] private TextMeshProUGUI curHp;
+    [SerializeField] private TextMeshProUGUI maxArmor;
+    [SerializeField] private TextMeshProUGUI curArmor;
 
-    public TextMeshProUGUI maxBulletCount;
-    public TextMeshProUGUI curBulletCount;
+    [SerializeField] private TextMeshProUGUI maxBulletCount;
+    [SerializeField] private TextMeshProUGUI curBulletCount;
     
-    public Image reloadTimeImage;
-    public Image reloadTimeFillImg;
+    [SerializeField] public Image reloadTimeImage;
+    [SerializeField] private Image reloadTimeFillImg;
     
-    public GameObject monsterHpBarPrefab;
+    [SerializeField] private GameObject monsterHpBarPrefab;
     private List<GameObject> _poolHpBars;
     private Dictionary<Monster, Slider> monsterHpBars;
     
-    public GameObject dmgTextPrefab;
+    [SerializeField] private GameObject dmgTextPrefab;
     private List<GameObject> _poolDmgText;
     
-    public GameObject LevelUPPanel;
-    public GameObject upgradeBtnPrefab;
-    public GameObject upgradeBtnSpawnParent;
+    [SerializeField] private GameObject LevelUPPanel;
+    [SerializeField] private GameObject upgradeBtnPrefab;
+    [SerializeField] private GameObject upgradeBtnSpawnParent;
     private List<GameObject> _poolUpgradeBtn;
-    public List<Sprite> icons;
+    [SerializeField] private List<Sprite> icons;
     
-    public GameObject ESCPanel;
-    public GameObject OptionPanel;
-    public GameObject VictoryPanel; 
-    public GameObject DefeatPanel;
+    [SerializeField] private GameObject ESCPanel;
+    [SerializeField] private GameObject OptionPanel;
+    [SerializeField] private GameObject VictoryPanel; 
+    [SerializeField] private GameObject DefeatPanel;
     
     public GameObject uiPool;
 
@@ -62,7 +62,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         Vector2 hotSpot = new Vector2(crosshair.width / 2.0f, crosshair.height / 2.0f);
-        Cursor.SetCursor(crosshair, hotSpot, CursorMode.Auto);
+        //Cursor.SetCursor(crosshair, hotSpot, CursorMode.Auto);
         
         reloadTimeImage.gameObject.SetActive(false);
     }

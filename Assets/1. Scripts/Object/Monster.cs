@@ -19,11 +19,11 @@ public class Monster : MonoBehaviour
     public bool IsDead => curHp <= 0;
     public bool IsBeingPushedBack { get; set; }
 
-    public bool IsAttackable => attackElapsedTime >= monsterData.attackCoolTime && Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= 1.0f;
+    public bool IsAttackable => attackElapsedTime >= monsterData.attackCoolTime;
     
     public bool IsUsingSkill => monsterData.skillDuration > skillElapsedTime;
     public bool IsSkillCoolTimeDone => !IsUsingSkill && monsterData.skillCoolTime <= skillElapsedTime;
-    public bool IsSkillAvailable => IsSkillCoolTimeDone && Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= monsterData.skillActivationRange;
+    public bool IsSkillAvailable => IsSkillCoolTimeDone;
 
     public void MonsterInit()
     {
