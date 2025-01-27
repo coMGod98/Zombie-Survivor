@@ -2,16 +2,20 @@ using UnityEngine;
 
 public class RoundManager : MonoBehaviour
 {
-    public int phase;
-    public float elapsedTime;
+    [SerializeField] private int phase;
+    [SerializeField] private float elapsedTime;
     private float spawnTimer = 15.0f;
-    private float eliteSpawnTimer = 0.0f;
-    private float bossSpawnTimer = 0.0f;
+    [SerializeField] private float eliteSpawnTimer = 0.0f;
+    [SerializeField] private float bossSpawnTimer = 0.0f;
     private float spawnInterval = 20.0f;
     private float eliteSpawnInterval = 120.0f;
     private float bossSpawnInterval = 300.0f;
     
+    public int Phase => phase;
+    public float ElapsedTime => elapsedTime;
+    
     private int eliteSpawnCount = 1;
+    private bool isLastBossSpawned = false;
     
     private void Awake()
     {
@@ -37,10 +41,10 @@ public class RoundManager : MonoBehaviour
                 GameWorld.Instance.GameClear();
             }
         }
-        
-        if (elapsedTime < 600.0f)
+        else
         {
-
+            if (isLastBossSpawned) return;
+            
             if (spawnTimer >= spawnInterval)
             {
                 spawnTimer = 0.0f;
@@ -61,7 +65,7 @@ public class RoundManager : MonoBehaviour
             }
         }
         
-        if (elapsedTime >= 300.0f && phase == 0) // 5분마다 phase 증가
+        if (elapsedTime >= 300.0f && phase == 0)
         {
             phase++;
             eliteSpawnCount = 1;
@@ -83,13 +87,16 @@ public class RoundManager : MonoBehaviour
 
     private void SpawnEliteMonster()
     {
-        if (phase == 0)
+        for (int i = 0; i < eliteSpawnCount; i++)
         {
-            GameWorld.Instance.MonsterManager.MonsterSpawn(5);
-        }
-        else if (phase == 1)
-        {
-            GameWorld.Instance.MonsterManager.MonsterSpawn(6);
+            if (phase == 0)
+            {
+                GameWorld.Instance.MonsterManager.MonsterSpawn(5);
+            }
+            else if (phase == 1)
+            {
+                GameWorld.Instance.MonsterManager.MonsterSpawn(6);
+            }
         }
     }
 
@@ -99,8 +106,9 @@ public class RoundManager : MonoBehaviour
         {
             GameWorld.Instance.MonsterManager.MonsterSpawn(6);
         }
-        else if (phase == 1)
+        else
         {
+            isLastBossSpawned = true;
             GameWorld.Instance.MonsterManager.MonsterSpawn(7);
         }
     }

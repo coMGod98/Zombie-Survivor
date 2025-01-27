@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    public List<Item> allItemList;
-    public GameObject[] itemPrefabArray;
+    private List<Item> allItemList;
+    [SerializeField] private GameObject[] itemPrefabArray;
     private List<GameObject>[] _poolItemList;
 
     public Transform itemSpawnParent;
@@ -41,12 +41,12 @@ public class ItemManager : MonoBehaviour
         {
             Item item = allItemList[i];
             
-            if (Vector3.Distance(item.transform.position, GameWorld.Instance.PlayerManager.player.transform.position) 
-                < GameWorld.Instance.PlayerManager.player.playerData.detectObjRadius[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.DetectObjRadius]])
+            if (Vector3.Distance(item.transform.position, GameWorld.Instance.PlayerManager.Player.transform.position) 
+                < GameWorld.Instance.PlayerManager.Player.playerData.detectObjRadius[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.DetectObjRadius]])
             {
                 if (item.target == null)
                 {
-                    item.target = GameWorld.Instance.PlayerManager.player;
+                    item.target = GameWorld.Instance.PlayerManager.Player;
                     StartCoroutine(ItemMove(item));
                 }
             }
@@ -67,7 +67,7 @@ public class ItemManager : MonoBehaviour
             }
             case ItemType.Heal:
             {
-                GameWorld.Instance.PlayerManager.GetHealItem(10);    
+                GameWorld.Instance.PlayerManager.GetHealItem(50);    
                 break;
             }
             case ItemType.Armor:
@@ -84,7 +84,7 @@ public class ItemManager : MonoBehaviour
                     {
                         if (expObj.target == null)
                         {
-                            expObj.target = GameWorld.Instance.PlayerManager.player;
+                            expObj.target = GameWorld.Instance.PlayerManager.Player;
                             StartCoroutine(ItemMove(expObj));
                         }
                     }

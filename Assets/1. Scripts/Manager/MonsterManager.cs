@@ -13,7 +13,7 @@ public class MonsterManager : MonoBehaviour
     
     [SerializeField] private Transform monsterSpawnParent;
     
-   [SerializeField] private LayerMask playerMask;    
+    [SerializeField] private LayerMask playerMask;    
     private Dictionary<int, Monster> _objectIdToMonster;
     private Dictionary<int, float> _randomWeightValues;
     private Collider[] _bulletResults = new Collider[100];
@@ -114,6 +114,7 @@ public class MonsterManager : MonoBehaviour
         GameWorld.Instance.UIManager.RemoveMonsterHpBar(monster);
         StartCoroutine(DisApearing(monster));   
         
+        if (monster.monsterType == MonsterType.Boss) return;
         GameWorld.Instance.ItemManager.ItemSpawn(0, monster, monster.transform.position);
         float randomValue = Random.value;
         if (randomValue < 0.05f)
@@ -143,11 +144,11 @@ public class MonsterManager : MonoBehaviour
     {
         if (monster.IsUsingSkill) return;
         if (monster.IsAttackable &&
-            Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= 1.0f)
+            Vector3.Distance(monster.transform.position, GameWorld.Instance.PlayerManager.Player.transform.position) <= 1.0f)
         {
             monster.attackElapsedTime = 0.0f;
             GameWorld.Instance.PlayerManager.PlayerInflictDamage(
-                monster.monsterData.attackDmg[GameWorld.Instance.RoundManager.phase]);
+                monster.monsterData.attackDmg[monster.phase]);
         }
     }
 
@@ -156,8 +157,8 @@ public class MonsterManager : MonoBehaviour
         switch (monster.monsterType)
         {
             case MonsterType.NormalLong:
-                if (monster.IsSkillAvailable &&
-                    Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= monster.monsterData.skillActivationRange)
+                if (monster.IsSkillCoolTimeDone &&
+                    Vector3.Distance(monster.transform.position, GameWorld.Instance.PlayerManager.Player.transform.position) <= monster.monsterData.skillActivationRange)
                 {
                     monster.monsterAnimator.SetBool("IsAttack", true);
                     monster.skillElapsedTime = 0.0f;
@@ -173,8 +174,8 @@ public class MonsterManager : MonoBehaviour
                 }
                 break;
             case MonsterType.EliteRush:
-                if (monster.IsSkillAvailable &&
-                    Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= monster.monsterData.skillActivationRange)
+                if (monster.IsSkillCoolTimeDone &&
+                    Vector3.Distance(monster.transform.position, GameWorld.Instance.PlayerManager.Player.transform.position) <= monster.monsterData.skillActivationRange)
                 {
                     StartCoroutine(Rush(monster));
                     monster.skillElapsedTime = 0.0f;
@@ -182,8 +183,8 @@ public class MonsterManager : MonoBehaviour
                 
                 break;
             case MonsterType.Boss:
-                if (monster.IsSkillAvailable &&
-                    Vector3.Distance(transform.position, GameWorld.Instance.PlayerManager.player.transform.position) <= monster.monsterData.skillActivationRange)
+                if (monster.IsSkillCoolTimeDone &&
+                    Vector3.Distance(monster.transform.position, GameWorld.Instance.PlayerManager.Player.transform.position) <= monster.monsterData.skillActivationRange)
                 {
                     int randomSkill = Random.Range(0, 2);
                     switch (randomSkill)
@@ -215,7 +216,7 @@ public class MonsterManager : MonoBehaviour
                 obj.SetActive(true);
                 obj.transform.position = monsterBulletSpawnPosition;
                 obj.transform.rotation = monsterBulletRotation;
-                StartCoroutine(MonsterBulletMove(obj, monster.monsterData.attackDmg[GameWorld.Instance.RoundManager.phase] * 2.0f));
+                StartCoroutine(MonsterBulletMove(obj, monster.monsterData.attackDmg[monster.phase] * 2.0f));
 
                 break;
             }
@@ -225,7 +226,7 @@ public class MonsterManager : MonoBehaviour
         {
             GameObject obj = Instantiate(monsterBulletPrefab, monsterBulletSpawnPosition, monsterBulletRotation, monsterSpawnParent);
             _poolMonsterBullet.Add(obj);
-            StartCoroutine(MonsterBulletMove(obj, monster.monsterData.attackDmg[GameWorld.Instance.RoundManager.phase] * 2.0f));
+            StartCoroutine(MonsterBulletMove(obj, monster.monsterData.attackDmg[monster.phase] * 2.0f));
         }
     }
     
@@ -249,7 +250,7 @@ public class MonsterManager : MonoBehaviour
             for (int j = 0; j < hitCount; ++j)
             {
                 Collider col = _bulletResults[j];
-                if (col.gameObject.GetInstanceID() == GameWorld.Instance.PlayerManager.player.gameObject.GetInstanceID())
+                if (GameWorld.Instance.PlayerManager.IsPlayer(col.gameObject.GetInstanceID()))
                 {
                     GameWorld.Instance.PlayerManager.PlayerInflictDamage(dmg);
                     obj.gameObject.SetActive(false);
@@ -307,9 +308,9 @@ public class MonsterManager : MonoBehaviour
             for(int i = 0; i < hitCount; ++i)
             {
                 Collider col = _rushResults[i];
-                if (col.gameObject.GetInstanceID() == GameWorld.Instance.PlayerManager.player.gameObject.GetInstanceID())
+                if (GameWorld.Instance.PlayerManager.IsPlayer(col.gameObject.GetInstanceID()))
                 {
-                    GameWorld.Instance.PlayerManager.PlayerInflictDamage(monster.monsterData.attackDmg[GameWorld.Instance.RoundManager.phase] * 2.0f);
+                    GameWorld.Instance.PlayerManager.PlayerInflictDamage(monster.monsterData.attackDmg[monster.phase] * 2.0f);
                     isHit = true;
                     
                     break;
@@ -365,9 +366,9 @@ public class MonsterManager : MonoBehaviour
                     float angleToPlayer = Vector3.Angle(monster.transform.forward, directionToPlayer);
                     if (angleToPlayer <= 120.0f / 2)
                     {
-                        if (col.gameObject.GetInstanceID() == GameWorld.Instance.PlayerManager.player.gameObject.GetInstanceID())
+                        if (GameWorld.Instance.PlayerManager.IsPlayer(col.gameObject.GetInstanceID()))
                         {
-                            GameWorld.Instance.PlayerManager.PlayerInflictDamage(monster.monsterData.attackDmg[GameWorld.Instance.RoundManager.phase] * 2.0f);
+                            GameWorld.Instance.PlayerManager.PlayerInflictDamage(monster.monsterData.attackDmg[monster.phase] * 2.0f);
                             Debug.Log("hit");
                             break;
                         }
@@ -421,9 +422,9 @@ public class MonsterManager : MonoBehaviour
                 for (int i = 0; i < hitCount; ++i)
                 {
                     Collider col = _skillResults[i];
-                    if (col.gameObject.GetInstanceID() == GameWorld.Instance.PlayerManager.player.gameObject.GetInstanceID())
+                    if (GameWorld.Instance.PlayerManager.IsPlayer(col.gameObject.GetInstanceID()))
                     {
-                        GameWorld.Instance.PlayerManager.PlayerInflictDamage(monster.monsterData.attackDmg[GameWorld.Instance.RoundManager.phase] * 2.0f);
+                        GameWorld.Instance.PlayerManager.PlayerInflictDamage(monster.monsterData.attackDmg[monster.phase] * 2.0f);
                         Debug.Log("hit");
                         break;
                     }
@@ -528,7 +529,7 @@ public class MonsterManager : MonoBehaviour
         {
             if (monster.IsBeingPushedBack || monster.IsUsingSkill) continue;
             
-            Vector3 moveDir = GameWorld.Instance.PlayerManager.player.transform.position - monster.transform.position;
+            Vector3 moveDir = GameWorld.Instance.PlayerManager.Player.transform.position - monster.transform.position;
             float moveDist = moveDir.magnitude;
             moveDir.Normalize();
             
@@ -557,7 +558,7 @@ public class MonsterManager : MonoBehaviour
         float z = radius * Mathf.Cos(angle);
         
         Vector3 randomVector = new Vector3(x, 0.0f, z);
-        Vector3 randomPosition = GameWorld.Instance.PlayerManager.player.transform.position + randomVector;
+        Vector3 randomPosition = GameWorld.Instance.PlayerManager.Player.transform.position + randomVector;
         
         randomPosition.x = Mathf.Clamp(randomPosition.x, -120, 120);
         randomPosition.z = Mathf.Clamp(randomPosition.z, -120, 120);
@@ -573,7 +574,7 @@ public class MonsterManager : MonoBehaviour
                 monster.transform.rotation = Quaternion.identity;
                 monster.monsterType = (MonsterType) index;
                 monster.monsterData = GameWorld.Instance.DataManager.monsterDic[monster.monsterType];
-                monster.phase = GameWorld.Instance.RoundManager.phase;
+                monster.phase = GameWorld.Instance.RoundManager.Phase;
                 monster.MonsterInit();
                 allMonsterList.Add(monster);
                 
@@ -589,7 +590,7 @@ public class MonsterManager : MonoBehaviour
             Monster newMonster = obj.GetComponent<Monster>();
             newMonster.monsterType = (MonsterType) index;
             newMonster.monsterData = GameWorld.Instance.DataManager.monsterDic[newMonster.monsterType];
-            newMonster.phase = GameWorld.Instance.RoundManager.phase;
+            newMonster.phase = GameWorld.Instance.RoundManager.Phase;
             newMonster.MonsterInit();
             allMonsterList.Add(newMonster);
             _objectIdToMonster.Add(obj.GetInstanceID(), newMonster);

@@ -9,7 +9,7 @@ public class PlayerManager : MonoBehaviour
 {
     private Camera _camera;
     
-    [SerializeField] public Player player;
+    [SerializeField] private Player player;
     [SerializeField] private LayerMask  groundMask;
     
     private Vector2 _axis;
@@ -21,6 +21,8 @@ public class PlayerManager : MonoBehaviour
     private Queue<UnityAction> _levelUpQueue;
     private List<UpgradeType> _upgradeOptions;
     private List<UpgradeType> _selectedUpgradeTypes;
+
+    public Player Player => player;
     
     private void Awake()
     {
@@ -37,6 +39,16 @@ public class PlayerManager : MonoBehaviour
             UpgradeType.BombBulletChance, UpgradeType.FireBulletChance, UpgradeType.Missile, UpgradeType.Knife, UpgradeType.Shield, UpgradeType.FragGrenade, UpgradeType.SmokeGrenade, UpgradeType.Mine
         };
         _selectedUpgradeTypes = new List<UpgradeType>();
+    }
+    
+    public bool IsPlayer(int objectId)
+    {
+        if (player.gameObject.GetInstanceID() == objectId)
+        {
+            return true;
+        }
+
+        return false;
     }
     
     public void PlayerAI()
@@ -65,6 +77,7 @@ public class PlayerManager : MonoBehaviour
             for (int i = GameWorld.Instance.MonsterManager.allMonsterList.Count - 1; i >= 0; i--)
             {
                 Monster monster = GameWorld.Instance.MonsterManager.allMonsterList[i];
+                if (monster.IsDead) continue;
                 if (Vector3.Distance(player.transform.position, monster.transform.position) <= 10.0f)
                     rangedMonsters.Add(monster);
             }
@@ -116,7 +129,7 @@ public class PlayerManager : MonoBehaviour
                 player.bulletFireElapsedTime = 0.0f;
                 player.bulletReloadElapsedTime = 0.0f;
                 player.playerAnimator.SetBool("IsReload", false);
-                GameWorld.Instance.UIManager.reloadTimeImage.gameObject.SetActive(false);
+                GameWorld.Instance.UIManager.ShowReloadUI(false);
                 
                 if (Random.value <
                     player.playerData.fireBulletChance[player.upgradeSelectionCounts[UpgradeType.FireBulletChance]])
@@ -134,16 +147,16 @@ public class PlayerManager : MonoBehaviour
             {
                 player.bulletReloadElapsedTime += Time.deltaTime;
                 player.playerAnimator.SetBool("IsReload", true);
-                GameWorld.Instance.UIManager.reloadTimeImage.gameObject.SetActive(true);
+                GameWorld.Instance.UIManager.ShowReloadUI(true);
             }
             else
             {
                 player.playerAnimator.SetBool("IsReload", false);
-                GameWorld.Instance.UIManager.reloadTimeImage.gameObject.SetActive(false);
+                GameWorld.Instance.UIManager.ShowReloadUI(false);
             }
         }
 
-        if (player.IsMissileUsable && player.targetMonster.Count > player.playerData.missileCount[player.upgradeSelectionCounts[UpgradeType.Missile]]
+        if (player.IsMissileUsable && player.targetMonster.Count >= player.playerData.missileCount[player.upgradeSelectionCounts[UpgradeType.Missile]]
             && GameWorld.Instance.WeaponManager.IsUsingMissile == false)
         {
             player.missileUseElapsedTime = 0.0f;
@@ -159,13 +172,13 @@ public class PlayerManager : MonoBehaviour
             player.shieldUseElapsedTime = 0.0f;
             GameWorld.Instance.WeaponManager.WeaponSpawn(2, player.playerData.shieldCount[player.upgradeSelectionCounts[UpgradeType.Shield]]);
         }
-        if (player.IsFragUsable && player.targetMonster.Count > player.playerData.fragCount[player.upgradeSelectionCounts[UpgradeType.FragGrenade]]
+        if (player.IsFragUsable && player.targetMonster.Count >= player.playerData.fragCount[player.upgradeSelectionCounts[UpgradeType.FragGrenade]]
             && GameWorld.Instance.WeaponManager.IsUsingFragGrenade == false)
         {
             player.fragUseElapsedTime = 0.0f;
             GameWorld.Instance.WeaponManager.WeaponSpawn(3, player.playerData.fragCount[player.upgradeSelectionCounts[UpgradeType.FragGrenade]]);
         }
-        if (player.IsSmokeUsable && player.targetMonster.Count > player.playerData.smokeCount[player.upgradeSelectionCounts[UpgradeType.SmokeGrenade]]
+        if (player.IsSmokeUsable && player.targetMonster.Count >= player.playerData.smokeCount[player.upgradeSelectionCounts[UpgradeType.SmokeGrenade]]
             && GameWorld.Instance.WeaponManager.IsUsingSmokeGrenade == false)
         {
             player.smokeUseElapsedTime = 0.0f;
@@ -236,7 +249,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
     
-    public void PlayerLevelUp()
+    private void PlayerLevelUp()
     {
         if (_isLevelUp)
         {
@@ -297,7 +310,7 @@ public class PlayerManager : MonoBehaviour
         bool levelChange = false;
         
         player.playerSound.PlayOneShot(GameWorld.Instance.SoundManager.expSound);
-        player.curExp += item.expData.expAmount[GameWorld.Instance.RoundManager.phase] * player.playerData.expGainAmount[player.upgradeSelectionCounts[UpgradeType.ExpGainAmount]];
+        player.curExp += item.expData.expAmount[GameWorld.Instance.RoundManager.Phase] * player.playerData.expGainAmount[player.upgradeSelectionCounts[UpgradeType.ExpGainAmount]];
         if (player.curExp >= player.playerData.maxExp[player.level - 1])
         {
             player.curExp = player.playerData.maxExp[player.level - 1] - player.curExp;

@@ -33,8 +33,8 @@ public class FXManager : MonoBehaviour
                 obj.transform.position = position;
                 obj.transform.rotation = rotation;
                 obj.transform.localScale = Vector3.one *
-                                           GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[
-                                               GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]];
+                                           GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[
+                                               GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]];
                 break;  
             }
         }
@@ -43,8 +43,8 @@ public class FXManager : MonoBehaviour
             GameObject obj = Instantiate(fxPrefabArray[index], position, rotation, fxSpawnParent);
             _poolFXList[index].Add(obj);
             obj.transform.localScale = Vector3.one *
-                                       GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[
-                                           GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]];
+                                       GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[
+                                           GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]];
         }   
     }
 }

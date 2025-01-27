@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI maxBulletCount;
     [SerializeField] private TextMeshProUGUI curBulletCount;
     
-    [SerializeField] public Image reloadTimeImage;
+    [SerializeField] private Image reloadTimeImage;
     [SerializeField] private Image reloadTimeFillImg;
     
     [SerializeField] private GameObject monsterHpBarPrefab;
@@ -48,7 +48,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject VictoryPanel; 
     [SerializeField] private GameObject DefeatPanel;
     
-    public GameObject uiPool;
+    [SerializeField] private GameObject uiPool;
 
     private void Awake()
     {
@@ -62,7 +62,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         Vector2 hotSpot = new Vector2(crosshair.width / 2.0f, crosshair.height / 2.0f);
-        //Cursor.SetCursor(crosshair, hotSpot, CursorMode.Auto);
+        Cursor.SetCursor(crosshair, hotSpot, CursorMode.Auto);
         
         reloadTimeImage.gameObject.SetActive(false);
     }
@@ -70,18 +70,17 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         UpdateUI();
-        ReloadUI();
         UpdateMonsterHpBar();
     }
     
     private void UpdateUI()
     {
-        Player player = GameWorld.Instance.PlayerManager.player;
+        Player player = GameWorld.Instance.PlayerManager.Player;
         hpSlider.value = player.curHp / player.playerData.maxHp[player.upgradeSelectionCounts[UpgradeType.MaxHp]];
         armorSlider.value = player.curArmor / player.playerData.maxArmor[player.upgradeSelectionCounts[UpgradeType.MaxArmor]];
         expSlider.value = player.curExp / player.playerData.maxExp[player.level - 1];
         
-        TimeSpan timeSpan = TimeSpan.FromSeconds(660 - GameWorld.Instance.RoundManager.elapsedTime);
+        TimeSpan timeSpan = TimeSpan.FromSeconds(660 - GameWorld.Instance.RoundManager.ElapsedTime);
         elaspedTime.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
         
         maxHp.text = player.playerData.maxHp[player.upgradeSelectionCounts[UpgradeType.MaxHp]].ToString();
@@ -197,16 +196,17 @@ public class UIManager : MonoBehaviour
             levelUPBtn.upgradeData = GameWorld.Instance.DataManager.upgradeDic[upgradeType];
             levelUPBtn.icon.sprite = icons[levelUPBtn.upgradeData.iconIndex];
             levelUPBtn.title.text = levelUPBtn.upgradeData.title;
-            levelUPBtn.description.text = levelUPBtn.upgradeData.description[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[upgradeType]];
+            levelUPBtn.description.text = levelUPBtn.upgradeData.description[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[upgradeType]];
         }
     }
 
-    private void ReloadUI()
+    public void ShowReloadUI(bool set)
     {
-        Player player = GameWorld.Instance.PlayerManager.player;
+        reloadTimeImage.gameObject.SetActive(set);
         if (reloadTimeImage.gameObject.activeSelf)
         {
-            Vector3 worldPos = GameWorld.Instance.PlayerManager.player.transform.position + new Vector3(0, 2.5f, 0);
+            Player player = GameWorld.Instance.PlayerManager.Player;
+            Vector3 worldPos = player.transform.position + new Vector3(0, 2.5f, 0);
             Vector3 screenPos = _camera.WorldToScreenPoint(worldPos);
             reloadTimeImage.transform.position = screenPos;
             

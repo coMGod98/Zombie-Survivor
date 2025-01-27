@@ -197,7 +197,7 @@ public class DataManager : MonoBehaviour
     {
         playerData = new PlayerData();
         playerData.maxExp = new List<float>();
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 100; i++)
         {
             playerData.maxExp.Add(100.0f + i * 100.0f); // 100 200 300 400 500
         }
@@ -368,7 +368,7 @@ public class DataManager : MonoBehaviour
         }
         bulletData.scale = 1.0f;
         bulletData.hitRange = 2.0f;
-        bulletData.damageCoefficient = 1.0f;
+        bulletData.damageCoefficient = 1.5f;
         
         bulletDic.Add(BulletType.FireBullet, bulletData);
     }
@@ -876,12 +876,12 @@ public class DataManager : MonoBehaviour
         // BombBulletChance 
         upgradeData.upgradeType = UpgradeType.BombBulletChance;
         upgradeData.iconIndex = 15;
-        upgradeData.title = "폭탄 총알 확률 증가";
+        upgradeData.title = "폭발 총알 확률 증가";
         upgradeData.description = new List<string>();
-        upgradeData.description.Add("폭탄 총알을 사용할 수 있습니다.");
+        upgradeData.description.Add("폭발 총알을 사용할 수 있습니다.");
         for(int i = 1; i < 4; i++)
         {
-            upgradeData.description.Add("폭탄 총알의 확률이 10% 증가합니다.");
+            upgradeData.description.Add("폭발 총알의 확률이 10% 증가합니다.");
         };
         
         upgradeDic.Add(UpgradeType.BombBulletChance, upgradeData);

@@ -29,10 +29,10 @@ public class BulletManager : MonoBehaviour
 
     public void BulletDetectMonster()
     {
-        Player player = GameWorld.Instance.PlayerManager.player;
         if (allBulletList.Count == 0) return;
         for (int i = allBulletList.Count - 1; i >= 0; --i)
         {
+            Player player = GameWorld.Instance.PlayerManager.Player;
             Bullet bullet = allBulletList[i];
             float hitDamage = player.playerData.bulletDamage[player.upgradeSelectionCounts[UpgradeType.BulletDamage]] * bullet.bulletData.damageCoefficient;
             float hitRange = bullet.bulletData.hitRange * player.playerData.allAttackRange[player.upgradeSelectionCounts[UpgradeType.AllAttackRange]];
@@ -47,22 +47,14 @@ public class BulletManager : MonoBehaviour
                         if (GameWorld.Instance.MonsterManager.IsMonster(col.gameObject.GetInstanceID(), out var monster) && !bullet.hitMonsterList.Contains(monster))
                         {
                             if(monster.IsDead) continue;
-                            GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, hitDamage);
+                            
                             bullet.hitMonsterList.Add(monster);
-                            // 관통
-                            if (player.playerData.bulletPenetrationMaxCount[player.upgradeSelectionCounts[UpgradeType.BulletPenetrationMaxCount]] <= bullet.hitMonsterList.Count)
-                            {
-                                allBulletList.Remove(bullet);
-                                bullet.gameObject.SetActive(false);
-                            }
-
-                            // 퍼짐
+                            GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, hitDamage);
+                            
                             SmallBulletSpawn(1, bullet.transform.position, player.playerData.bulletSpreadCount[player.upgradeSelectionCounts[UpgradeType.BulletSpreadCount]]);;
 
-                            // 주변 데미지
                             if (Random.value < player.playerData.bombBulletChance[player.upgradeSelectionCounts[UpgradeType.BombBulletChance]])
                             {
-                                // 총알 폭발 FX
                                 GameWorld.Instance.FXManager.FXSpawn(0, bullet.transform.position, Quaternion.identity);
                                 int hitcount2 = Physics.OverlapSphereNonAlloc(bullet.transform.position, hitRange * 1.5f, _bombResults, monsterMask);
                                 for (int k = 0; k < hitcount2; ++k)
@@ -73,6 +65,13 @@ public class BulletManager : MonoBehaviour
                                         GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster2,player.playerData.bulletDamage[player.upgradeSelectionCounts[UpgradeType.BulletDamage]] * 1.5f);
                                     }
                                 }
+                            }
+                            
+                            if (player.playerData.bulletPenetrationMaxCount[player.upgradeSelectionCounts[UpgradeType.BulletPenetrationMaxCount]] <= bullet.hitMonsterList.Count)
+                            {
+                                allBulletList.Remove(bullet);
+                                bullet.gameObject.SetActive(false);
+                                break;
                             }
                         }
                     }
@@ -134,7 +133,7 @@ public class BulletManager : MonoBehaviour
         for (int i = allBulletList.Count - 1; i >= 0; --i)
         { 
             Bullet bullet = allBulletList[i];
-            float moveDistance = bullet.bulletData.bulletSpeed[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.BulletSpeed]] * Time.deltaTime;
+            float moveDistance = bullet.bulletData.bulletSpeed[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.BulletSpeed]] * Time.deltaTime;
             if (bullet.bulletType == BulletType.SmallBullet) moveDistance = 5.0f * Time.deltaTime;
             bullet.transform.Translate
                 (bullet.moveDirection * moveDistance, Space.World);
@@ -190,7 +189,8 @@ public class BulletManager : MonoBehaviour
                 bullet.transform.rotation = rotation;
                 bullet.moveDirection = direction;
                 bullet.bulletData = GameWorld.Instance.DataManager.bulletDic[(BulletType) index];
-                bullet.transform.localScale = Vector3.one * (bullet.bulletData.scale * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]]);
+                bullet.transform.localScale = Vector3.one * (bullet.bulletData.scale * 
+                                                             GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]]);
                 allBulletList.Add(bullet);
                 break;
             }
@@ -205,14 +205,15 @@ public class BulletManager : MonoBehaviour
             newBullet.bulletType = (BulletType) index;
             newBullet.moveDirection = direction;
             newBullet.bulletData = GameWorld.Instance.DataManager.bulletDic[(BulletType) index];
-            newBullet.transform.localScale = Vector3.one * (newBullet.bulletData.scale * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]]);
+            newBullet.transform.localScale = Vector3.one * (newBullet.bulletData.scale * 
+                                                            GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]]);
             allBulletList.Add(newBullet);
         }
     }
 
     public void BulletSpawn(int index)
     {
-        Player player = GameWorld.Instance.PlayerManager.player;
+        Player player = GameWorld.Instance.PlayerManager.Player;
         Quaternion rotation = player.transform.rotation;
         Vector3 direction = player.transform.forward;
         BulletType bulletType = (BulletType) index;

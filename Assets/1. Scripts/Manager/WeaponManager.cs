@@ -4,21 +4,28 @@ using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
-    public LayerMask monsterMask;
+    [SerializeField] private LayerMask monsterMask;
     
-    public List<Weapon> allKnifeList;
-    public GameObject[] weaponPrefabArray;
+    private List<Weapon> allKnifeList;
+    [SerializeField] private GameObject[] weaponPrefabArray;
     private List<GameObject>[] _poolWeaponList;
 
-    public Transform weaponSpawnPoint;
-    public Transform weaponSpawnParent;
-
-    public bool IsUsingMissile;
-    public bool IsUsingKnife;
-    public bool IsUsingShield;  
-    public bool IsUsingFragGrenade;
-    public bool IsUsingSmokeGrenade;
-    public bool IsUsingMine;
+    [SerializeField] private Transform weaponSpawnPoint;
+    [SerializeField] private Transform weaponSpawnParent;
+    
+    private bool isUsingMissile;
+    private bool isUsingKnife;
+    private bool isUsingShield;
+    private bool isUsingFragGrenade;
+    private bool isUsingSmokeGrenade;
+    private bool isUsingMine;
+    
+    public bool IsUsingMissile => isUsingMissile;
+    public bool IsUsingKnife => isUsingKnife;
+    public bool IsUsingShield => isUsingShield;  
+    public bool IsUsingFragGrenade => isUsingFragGrenade;
+    public bool IsUsingSmokeGrenade => isUsingSmokeGrenade;
+    public bool IsUsingMine => isUsingMine;
     
     private float degree;
     private float radius = 2.0f;
@@ -44,7 +51,7 @@ public class WeaponManager : MonoBehaviour
 
     IEnumerator Missile(Weapon missile)
     {
-        IsUsingMissile = true;
+        isUsingMissile = true;
         float moveAmout = 0.0f;
         while (missile.gameObject.activeSelf)
         {
@@ -64,19 +71,20 @@ public class WeaponManager : MonoBehaviour
                 Collider col = _missileResults[j];
                 if (GameWorld.Instance.MonsterManager.IsMonster(col.gameObject.GetInstanceID(), out var monster))
                 {
+                    if (monster.IsDead) continue;
                     missile.gameObject.SetActive(false);
                     Vector3 bombPosition = new Vector3(monster.transform.position.x, 1.5f, monster.transform.position.z);
 
                     GameWorld.Instance.FXManager.FXSpawn(1, bombPosition, Quaternion.identity); 
                     int hitcount2 = Physics.OverlapSphereNonAlloc(missile.transform.position, 
-                        missile.weaponData.hitRange * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
+                        missile.weaponData.hitRange * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
                         _bombResults, monsterMask);
                     for (int k = 0; k < hitcount2; ++k)
                     {
                         Collider col2 = _bombResults[k];
                         if (GameWorld.Instance.MonsterManager.IsMonster(col2.gameObject.GetInstanceID(), out var monster2))
                         {
-                            GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster2, missile.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.Missile]]);
+                            GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster2, missile.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.Missile]]);
                         }
                     }
                     break;
@@ -84,12 +92,12 @@ public class WeaponManager : MonoBehaviour
             }
             yield return null;
         }
-        IsUsingMissile = false;
+        isUsingMissile = false;
     }
     
     IEnumerator Knife()
     {
-        IsUsingKnife = true;
+        isUsingKnife = true;
         float elapsedTime = 0.0f;
         while (elapsedTime < 10.0f)
         {
@@ -105,13 +113,8 @@ public class WeaponManager : MonoBehaviour
                     float z = radius * Mathf.Cos(radian);
                     allKnifeList[i].transform.position = weaponSpawnPoint.transform.position + new Vector3(x, 0, z);
                     
-                    if (degree == 0)
-                    {
-                        knife.hitMonsterList.Clear();
-                    }
-                    
                     int hitCount = Physics.OverlapSphereNonAlloc(knife.transform.position, 
-                        knife.weaponData.hitRange * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]],
+                        knife.weaponData.hitRange * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]],
                         _knifeResults, monsterMask);
                     for (int j = 0; j < hitCount; j++)
                     {
@@ -120,7 +123,7 @@ public class WeaponManager : MonoBehaviour
                         {
                             knife.hitMonsterList.Add(monster);
                             GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster,
-                                knife.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.Knife]]);
+                                knife.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.Knife]]);
                         }
                     }
                 }
@@ -128,6 +131,10 @@ public class WeaponManager : MonoBehaviour
             else
             {
                 degree = 0;
+                for (int i = 0; i < allKnifeList.Count; i++)
+                {
+                    allKnifeList[i].hitMonsterList.Clear();
+                }
             }
             
             elapsedTime += Time.deltaTime;
@@ -139,16 +146,16 @@ public class WeaponManager : MonoBehaviour
             allKnifeList[i].gameObject.SetActive(false);
         }
         allKnifeList.Clear();
-        IsUsingKnife = false;
+        isUsingKnife = false;
     }
     
     IEnumerator Shield(Weapon shield)
     {
-        IsUsingShield = true;
+        isUsingShield = true;
         float elapsedTime = 0.0f;
-        while (elapsedTime < 10.0f)
+        while (elapsedTime < 7.0f)//10.0f)
         {
-            shield.transform.position = GameWorld.Instance.PlayerManager.player.transform.position;
+            shield.transform.position = GameWorld.Instance.PlayerManager.Player.transform.position;
             
             shield.attackElapsedTime += Time.deltaTime;
             if (shield.attackElapsedTime > 2.0f)
@@ -157,7 +164,7 @@ public class WeaponManager : MonoBehaviour
                 shield.hitMonsterList.Clear();
             }
             int hitCount = Physics.OverlapSphereNonAlloc(shield.transform.position, 
-                shield.weaponData.hitRange * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
+                shield.weaponData.hitRange * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
                 _shieldResults, monsterMask);
             for (int j = 0; j < hitCount; j++)
             {
@@ -165,7 +172,7 @@ public class WeaponManager : MonoBehaviour
                 if (GameWorld.Instance.MonsterManager.IsMonster(col.gameObject.GetInstanceID(), out Monster monster) && !shield.hitMonsterList.Contains(monster))
                 {
                     shield.hitMonsterList.Add(monster);
-                    GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, shield.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.Shield]]);
+                    GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, shield.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.Shield]]);
                 }
             }
             
@@ -173,12 +180,12 @@ public class WeaponManager : MonoBehaviour
             yield return null;
         }
         shield.gameObject.SetActive(false);
-        IsUsingShield = false;
+        isUsingShield = false;
     }
     
     IEnumerator FragGrenade(Weapon fragGreande)
     {
-        IsUsingFragGrenade = true;
+        isUsingFragGrenade = true;
         while (fragGreande.isMoving)
         {
             fragGreande.currentVelocity.y += gravity * Time.deltaTime;
@@ -195,23 +202,23 @@ public class WeaponManager : MonoBehaviour
         
         GameWorld.Instance.FXManager.FXSpawn(2, fragGreande.transform.position, Quaternion.identity);
         int hitcount = Physics.OverlapSphereNonAlloc(fragGreande.transform.position, 
-            fragGreande.weaponData.hitRange * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
+            fragGreande.weaponData.hitRange * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
             _fragGrenadeResults, monsterMask);
         for (int k = 0; k < hitcount; ++k)
         {
             Collider col = _fragGrenadeResults[k];
             if (GameWorld.Instance.MonsterManager.IsMonster(col.gameObject.GetInstanceID(), out var monster))
             {
-                GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, fragGreande.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.FragGrenade]]); 
+                GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, fragGreande.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.FragGrenade]]); 
             }
         }
         fragGreande.gameObject.SetActive(false);
-        IsUsingFragGrenade = false;
+        isUsingFragGrenade = false;
     }
     
     IEnumerator SmokeGrenade(Weapon smokeGrenade)
     {
-        IsUsingSmokeGrenade = true;
+        isUsingSmokeGrenade = true;
         while (smokeGrenade.isMoving)
         {
             smokeGrenade.currentVelocity.y += gravity * Time.deltaTime;
@@ -227,7 +234,7 @@ public class WeaponManager : MonoBehaviour
         }
         StartCoroutine(SmokeGrenadeDamage(smokeGrenade, smokeGrenade.transform.position));
         smokeGrenade.gameObject.SetActive(false);
-        IsUsingSmokeGrenade = false;
+        isUsingSmokeGrenade = false;
     }
     
     private IEnumerator SmokeGrenadeDamage(Weapon smokeGrenade, Vector3 position)
@@ -236,14 +243,14 @@ public class WeaponManager : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             int hitcount = Physics.OverlapSphereNonAlloc(position, 
-                smokeGrenade.weaponData.hitRange * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
+                smokeGrenade.weaponData.hitRange * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
                 _smokeGrenadeResults, monsterMask);
             for (int k = 0; k < hitcount; ++k)
             {
                 Collider col = _smokeGrenadeResults[k];
                 if (GameWorld.Instance.MonsterManager.IsMonster(col.gameObject.GetInstanceID(), out var monster))
                 {
-                    GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, smokeGrenade.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.SmokeGrenade]]);
+                    GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster, smokeGrenade.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.SmokeGrenade]]);
                 }
             }
             yield return new WaitForSeconds(1.0f);
@@ -252,7 +259,7 @@ public class WeaponManager : MonoBehaviour
     
     IEnumerator Mine(Weapon mine)
     {
-        IsUsingMine = true;
+        isUsingMine = true;
         while (mine.isMoving)
         {
             mine.transform.position += Vector3.down * Time.deltaTime;
@@ -272,18 +279,18 @@ public class WeaponManager : MonoBehaviour
             for (int i = GameWorld.Instance.MonsterManager.allMonsterList.Count - 1; i >= 0; i--)
             {
                 Monster monster = GameWorld.Instance.MonsterManager.allMonsterList[i];
-                if (Vector3.Distance(monster.transform.position, mine.transform.position) <= 0.5f * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]])
+                if (Vector3.Distance(monster.transform.position, mine.transform.position) <= 0.7f * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]])
                 {
                     GameWorld.Instance.FXManager.FXSpawn(4, mine.transform.position, Quaternion.Euler(-90.0f, 0.0f, 0.0f));
                     int hitcount = Physics.OverlapSphereNonAlloc(mine.transform.position, 
-                        mine.weaponData.hitRange * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
+                        mine.weaponData.hitRange * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]], 
                         _mineResults, monsterMask);
                     for (int k = 0; k < hitcount; ++k)
                     {
                         Collider col = _mineResults[k];
                         if (GameWorld.Instance.MonsterManager.IsMonster(col.gameObject.GetInstanceID(), out var monster2))
                         {
-                            GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster2, mine.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.Mine]]);
+                            GameWorld.Instance.MonsterManager.MonsterInflictDamage(monster2, mine.weaponData.weaponDamage[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.Mine]]);
                         }
                     }
 
@@ -293,7 +300,7 @@ public class WeaponManager : MonoBehaviour
 
             yield return null;
         }
-        IsUsingMine = false;
+        isUsingMine = false;
     }
     
     private Vector3 CalculateInitialVelocity(Vector3 startPosition, Vector3 targetPosition)
@@ -343,7 +350,7 @@ public class WeaponManager : MonoBehaviour
     {
         for (int i = 0; i < count; i++)
         {
-            Vector3 targetPosition = GameWorld.Instance.PlayerManager.player.targetMonster[i].transform.position;
+            Vector3 targetPosition = GameWorld.Instance.PlayerManager.Player.targetMonster[i].transform.position;
             Vector3 direction = (targetPosition - weaponSpawnPoint.transform.position).normalized;
             direction.y = 0.0f;
 
@@ -373,7 +380,7 @@ public class WeaponManager : MonoBehaviour
 
     private void SpawnShield(int index)
     {
-        Weapon shield = GetOrCreateWeapon(index, GameWorld.Instance.PlayerManager.player.transform.position, Quaternion.identity);
+        Weapon shield = GetOrCreateWeapon(index, GameWorld.Instance.PlayerManager.Player.transform.position, Quaternion.identity);
         StartCoroutine(Shield(shield));
     }
 
@@ -381,7 +388,7 @@ public class WeaponManager : MonoBehaviour
     {
         for (int i = 0; i < count; i++)
         {
-            Vector3 targetPosition = GameWorld.Instance.PlayerManager.player.targetMonster[i].transform.position;
+            Vector3 targetPosition = GameWorld.Instance.PlayerManager.Player.targetMonster[i].transform.position;
             Weapon grenade = GetOrCreateWeapon(index, weaponSpawnPoint.position, Quaternion.identity);
             grenade.Initialize(CalculateInitialVelocity(weaponSpawnPoint.position, targetPosition), targetPosition);
 
@@ -424,7 +431,7 @@ public class WeaponManager : MonoBehaviour
                 weapon.WeaponInit();
                 weapon.weaponType = (WeaponType)index;
                 weapon.weaponData = GameWorld.Instance.DataManager.weaponDic[weapon.weaponType];
-                weapon.transform.localScale = Vector3.one * (weapon.weaponData.scale * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]]);
+                weapon.transform.localScale = Vector3.one * (weapon.weaponData.scale * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]]);
                 return weapon;
             }
         }
@@ -435,7 +442,7 @@ public class WeaponManager : MonoBehaviour
         newWeapon.WeaponInit();
         newWeapon.weaponType = (WeaponType)index;
         newWeapon.weaponData = GameWorld.Instance.DataManager.weaponDic[newWeapon.weaponType];
-        newWeapon.transform.localScale = Vector3.one * (newWeapon.weaponData.scale * GameWorld.Instance.PlayerManager.player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.player.upgradeSelectionCounts[UpgradeType.AllAttackRange]]);
+        newWeapon.transform.localScale = Vector3.one * (newWeapon.weaponData.scale * GameWorld.Instance.PlayerManager.Player.playerData.allAttackRange[GameWorld.Instance.PlayerManager.Player.upgradeSelectionCounts[UpgradeType.AllAttackRange]]);
         return newWeapon;
     }
 }

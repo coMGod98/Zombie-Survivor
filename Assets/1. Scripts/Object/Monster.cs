@@ -23,7 +23,7 @@ public class Monster : MonoBehaviour
     
     public bool IsUsingSkill => monsterData.skillDuration > skillElapsedTime;
     public bool IsSkillCoolTimeDone => !IsUsingSkill && monsterData.skillCoolTime <= skillElapsedTime;
-    public bool IsSkillAvailable => IsSkillCoolTimeDone;
+
 
     public void MonsterInit()
     {
