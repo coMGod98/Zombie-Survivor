@@ -110,7 +110,7 @@ public class WeaponManager : MonoBehaviour
                     
                     float radian = Mathf.Deg2Rad * (degree + (i * (360.0f / allKnifeList.Count)));
                     float x = radius * Mathf.Sin(radian);
-                    float z = radius * Mathf.Cos(radian);
+                    float z = radius * Mathf.Cos(radian); 
                     allKnifeList[i].transform.position = weaponSpawnPoint.transform.position + new Vector3(x, 0, z);
                     
                     int hitCount = Physics.OverlapSphereNonAlloc(knife.transform.position, 
@@ -153,7 +153,7 @@ public class WeaponManager : MonoBehaviour
     {
         isUsingShield = true;
         float elapsedTime = 0.0f;
-        while (elapsedTime < 7.0f)//10.0f)
+        while (elapsedTime < 10.0f)
         {
             shield.transform.position = GameWorld.Instance.PlayerManager.Player.transform.position;
             

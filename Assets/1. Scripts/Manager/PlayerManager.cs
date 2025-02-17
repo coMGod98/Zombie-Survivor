@@ -208,7 +208,6 @@ public class PlayerManager : MonoBehaviour
         _axis = new Vector2 (Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         Vector3 inputDir = new Vector3(_axis.x, 0, _axis.y).normalized;
         
-        // 이동 방향의 y값을 카메라의 y값에 더해줌
         Quaternion euler = Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0);
         _moveDirection = euler * inputDir;
         
@@ -220,9 +219,8 @@ public class PlayerManager : MonoBehaviour
 
         player.transform.position = newPosition;
         
-        // 보고있는 방향을 기준으로 이동 방향이 반대라면 -1, 같다면 1
-        var forwardDot = Vector3.Dot(player.transform.forward, _moveDirection);
-        var rightDot = Vector3.Dot(player.transform.right, _moveDirection);
+        float forwardDot = Vector3.Dot(player.transform.forward, _moveDirection);
+        float rightDot = Vector3.Dot(player.transform.right, _moveDirection);
         player.playerAnimator.SetFloat("Y", forwardDot);
         player.playerAnimator.SetFloat("X", rightDot);
     }
