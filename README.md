@@ -4,6 +4,6 @@
 </p>
 
 
-[![좀비 서바이벌](https://img.youtube.com/vi/8znL3XTxCko&t=28s/default.jpg)](https://www.youtube.com/watch?v=8znL3XTxCko&t=28s)
+[![좀비 서바이벌](https://img.youtube.com/vi/8znL3XTxCko/0.jpg)](https://www.youtube.com/watch?v=8znL3XTxCko)
 
 
